@@ -1,5 +1,5 @@
 // ============================================
-// СЕРВЕР ДЛЯ RENDER.COM
+// СЕРВЕР ДЛЯ RENDER.COM (ИСПРАВЛЕННЫЙ)
 // ============================================
 
 const http = require('http');
@@ -9,27 +9,35 @@ const crypto = require('crypto');
 
 const PORT = process.env.PORT || 8080;
 
-// Функция хеширования пароля
 function hashPassword(password) {
     return crypto.createHash('sha256').update(password).digest('hex');
 }
 
-// Путь к бинарному файлу с паролем
+// Путь к бинарному файлу
 const binPath = path.join(__dirname, 'config', 'password.bin');
 
-// Проверяем и создаем файл пароля если его нет
+// Создаем пароль если нет
 if (!fs.existsSync(binPath)) {
-    const defaultHash = hashPassword('auto123');
-    const buffer = Buffer.from(defaultHash, 'hex');
-    if (!fs.existsSync(path.join(__dirname, 'config'))) {
-        fs.mkdirSync(path.join(__dirname, 'config'));
-    }
-    fs.writeFileSync(binPath, buffer);
-    console.log('🔐 Создан пароль по умолчанию: auto123');
+    const configDir = path.join(__dirname, 'config');
+    if (!fs.existsSync(configDir)) fs.mkdirSync(configDir);
+    fs.writeFileSync(binPath, Buffer.from(hashPassword('auto123'), 'hex'));
+    console.log('🔐 Пароль по умолчанию: auto123');
 }
 
+// MIME типы для файлов
+const mimeTypes = {
+    '.html': 'text/html',
+    '.css': 'text/css',
+    '.js': 'application/javascript',
+    '.json': 'application/json',
+    '.bin': 'application/octet-stream',
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.ico': 'image/x-icon'
+};
+
 const server = http.createServer(async (req, res) => {
-    // CORS заголовки
+    // CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -44,14 +52,12 @@ const server = http.createServer(async (req, res) => {
     if (req.url === '/api/change-password' && req.method === 'POST') {
         let body = '';
         req.on('data', chunk => body += chunk);
-        req.on('end', async () => {
+        req.on('end', () => {
             try {
                 const { oldPassword, newPassword } = JSON.parse(body);
-                
                 const currentHash = fs.readFileSync(binPath).toString('hex');
-                const oldHash = hashPassword(oldPassword);
                 
-                if (currentHash !== oldHash) {
+                if (currentHash !== hashPassword(oldPassword)) {
                     res.writeHead(401, { 'Content-Type': 'application/json' });
                     res.end(JSON.stringify({ success: false, message: 'Неверный текущий пароль' }));
                     return;
@@ -63,15 +69,9 @@ const server = http.createServer(async (req, res) => {
                     return;
                 }
                 
-                const newHash = hashPassword(newPassword);
-                const buffer = Buffer.from(newHash, 'hex');
-                fs.writeFileSync(binPath, buffer);
-                
+                fs.writeFileSync(binPath, Buffer.from(hashPassword(newPassword), 'hex'));
                 res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ 
-                    success: true, 
-                    message: 'Пароль успешно изменен!' 
-                }));
+                res.end(JSON.stringify({ success: true, message: 'Пароль успешно изменен!' }));
                 
             } catch (error) {
                 res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -81,32 +81,28 @@ const server = http.createServer(async (req, res) => {
         return;
     }
 
-    // Статические файлы
-    let filePath = '.' + req.url;
-    if (filePath === './') filePath = './admin.html';
+    // Обработка статических файлов
+    let filePath = req.url === '/' ? '/admin.html' : req.url;
+    filePath = path.join(__dirname, filePath);
     
-    const extname = path.extname(filePath);
-    let contentType = 'text/html';
+    // Получаем расширение файла
+    const ext = path.extname(filePath);
+    const contentType = mimeTypes[ext] || 'text/plain';
     
-    switch (extname) {
-        case '.css': contentType = 'text/css'; break;
-        case '.js': contentType = 'application/javascript'; break;
-        case '.json': contentType = 'application/json'; break;
-        case '.bin': contentType = 'application/octet-stream'; break;
-        case '.html': contentType = 'text/html'; break;
-    }
-    
-    try {
-        const content = fs.readFileSync(filePath);
-        res.writeHead(200, { 'Content-Type': contentType });
-        res.end(content);
-    } catch (error) {
-        res.writeHead(404);
-        res.end('File not found');
-    }
+    // Читаем файл
+    fs.readFile(filePath, (err, content) => {
+        if (err) {
+            console.log(`❌ Файл не найден: ${filePath}`);
+            res.writeHead(404, { 'Content-Type': 'text/html' });
+            res.end('<h1>404 - Страница не найдена</h1>');
+        } else {
+            res.writeHead(200, { 'Content-Type': contentType });
+            res.end(content);
+        }
+    });
 });
 
 server.listen(PORT, () => {
-    console.log(`🚀 Сервер запущен на порту ${PORT}`);
-    console.log(`📁 Админ-панель: http://localhost:${PORT}/admin.html`);
+    console.log(`🚀 Сервер запущен: http://localhost:${PORT}`);
+    console.log(`📁 Корневая папка: ${__dirname}`);
 });
