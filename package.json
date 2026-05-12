@@ -1,0 +1,12 @@
+{
+  "name": "auto-master",
+  "version": "1.0.0",
+  "description": "Автосервис с админ-панелью",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
