@@ -82,7 +82,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     // Обработка статических файлов
-    let filePath = req.url === '/' ? '/admin.html' : req.url;
+    let filePath = req.url === '/' ? '/index.html' : req.url;
     filePath = path.join(__dirname, filePath);
     
     // Получаем расширение файла
