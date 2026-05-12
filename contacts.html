@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Контакты - Авто-Мастер</title>
+    <meta name="description" content="Свяжитесь с нами - Авто-Мастер в Нижнем Новгороде. Запись на ремонт, телефон, адрес.">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/744/744465.png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/partials-loader.js" defer></script>
+    <script src="js/common.js" defer></script>
+    <script src="js/contacts.js" defer></script>
+</head>
+<body>
+    <div id="header" data-component="components/header.html"></div>
+
+    <section class="page-hero">
+        <div class="container">
+            <h1>Контакты</h1>
+            <p>Свяжитесь с нами любым удобным способом</p>
+        </div>
+    </section>
+
+    <section class="section contact-info-section">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-details">
+                    <div class="contact-card">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h3>Адрес</h3>
+                            <p>г. Нижний Новгород, ул. Подворная 5</p>
+                        </div>
+                    </div>
+                    <div class="contact-card">
+                        <i class="fas fa-phone-alt"></i>
+                        <div>
+                            <h3>Телефон</h3>
+                            <p><a href="tel:+79040616703">+7 (904) 061-67-03</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-card">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h3>Email</h3>
+                            <p><a href="mailto:atanonov@mail.ru">atanonov@mail.ru</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-card">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h3>Режим работы</h3>
+                            <p>Пн-Пт: 9:00 - 20:00</p>
+                            <p>Сб-Вс: 10:00 - 18:00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-form-container">
+                    <h2>Записаться на ремонт</h2>
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <input type="text" id="name" placeholder="Ваше имя" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" id="phone" placeholder="Телефон" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" placeholder="Email">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="car" placeholder="Марка и модель автомобиля">
+                        </div>
+                        <div class="form-group">
+                            <textarea id="message" rows="4" placeholder="Опишите проблему"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Отправить заявку</button>
+                        <p class="form-note">Мы свяжемся с вами в ближайшее время</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Карта (опционально) -->
+    <section class="map-section">
+        <div class="container">
+            <h2 class="section-title">Как нас найти</h2>
+            <div class="map-container">
+                <iframe 
+                    src="https://yandex.ru/map-widget/v1/?um=constructor%3A1a2b3c4d5e6f7g8h9i0j&source=constructor" 
+                    width="100%" 
+                    height="400" 
+                    frameborder="0"
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Эвакуатор -->
+    <section class="emergency-section">
+        <div class="container">
+            <div class="emergency-box">
+                <i class="fas fa-truck"></i>
+                <div>
+                    <h3>Нужен эвакуатор?</h3>
+                    <p>Круглосуточная эвакуация автомобилей по Нижнему Новгороду и области</p>
+                </div>
+                <a href="tel:+79040616703" class="btn btn-primary">Вызвать эвакуатор</a>
+            </div>
+        </div>
+    </section>
+
+    <div id="footer" data-component="components/footer.html"></div>
+</body>
+</html>
