@@ -122,6 +122,12 @@ function escapeHtml(str) {
     });
 }
 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(reg => console.log('SW registered:', reg))
+    .catch(err => console.log('SW error:', err));
+}
+
 // Инициализация всех общих функций
 document.addEventListener('DOMContentLoaded', () => {
     initMobileMenu();

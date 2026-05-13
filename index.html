@@ -78,12 +78,5 @@
 
     <div id="footer" data-component="components/footer.html"></div>
 
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then(reg => console.log('SW registered:', reg))
-    .catch(err => console.log('SW error:', err));
-}
-</script>
 </body>
 </html>
