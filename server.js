@@ -53,6 +53,8 @@ const mimeTypes = {
     '.css': 'text/css',
     '.js': 'application/javascript',
     '.json': 'application/json',
+    '.png': 'image/png',      // ← ДОБАВЬТЕ ЭТУ СТРОКУ
+    '.ico': 'image/x-icon',
     '.bin': 'application/octet-stream'
 };
 
