@@ -11,6 +11,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="js/partials-loader.js" defer></script>
     <script src="js/common.js" defer></script>
+
+    <link rel="manifest" href="/manifest.json">
+	<link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+	<meta name="theme-color" content="#ff5722">
+
 </head>
 <body>
     <div id="header" data-component="components/header.html"></div>
@@ -72,5 +77,13 @@
     </section>
 
     <div id="footer" data-component="components/footer.html"></div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(reg => console.log('SW registered:', reg))
+    .catch(err => console.log('SW error:', err));
+}
+</script>
 </body>
 </html>
