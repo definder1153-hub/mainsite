@@ -1,0 +1,7 @@
+{
+  "formsubmitEnabled": true,
+  "googleSheetsEnabled": true,
+  "notificationEmail": "atanonov@mail.ru",
+  "formsubmitUrl": "https://formsubmit.co/ajax/atanonov@mail.ru",
+  "googleSheetsUrl": "https://script.google.com/macros/s/AKfycbzWMfPLH3N6LZzwtuNr8d6vUS4JB0O_RWXZHCTf3-ZKbhpD0ZAFZCFXihFJAyZtpC2IMg/exec"
+}

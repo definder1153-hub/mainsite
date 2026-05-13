@@ -58,6 +58,7 @@
             <button class="action-btn secondary" onclick="exportToCSV()"><i class="fas fa-file-csv"></i> Экспорт CSV</button>
             <button class="action-btn danger" onclick="deleteSelected()"><i class="fas fa-trash-alt"></i> Удалить выбранные</button>
             <button class="action-btn warning" onclick="markAsViewed()"><i class="fas fa-check-double"></i> Отметить просмотренные</button>
+            <button class="action-btn secondary" onclick="openSettingsModal()"><i class="fas fa-cog"></i> Настройки</button>
         </div>
     </div>
 
@@ -111,6 +112,54 @@
             <button onclick="closeChangePasswordModal()" style="flex: 1; padding: 10px; background: #6c757d; color: white; border: none; border-radius: 8px; cursor: pointer;">Отмена</button>
         </div>
         <div id="passwordChangeMessage" style="margin-top: 15px; text-align: center; font-size: 0.9rem;"></div>
+    </div>
+</div>
+
+<!-- Модальное окно настроек -->
+<div id="settingsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 10000;">
+    <div style="background: white; padding: 30px; border-radius: 15px; width: 500px; max-width: 90%;">
+        <h3 style="margin-bottom: 20px; color: #2c3e50;"><i class="fas fa-envelope"></i> Настройка уведомлений</h3>
+        
+        <div style="margin-bottom: 20px;">
+            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                <input type="checkbox" id="formsubmitEnabled" onchange="toggleFormsubmitSettings()">
+                <span style="font-weight: 600;">Отправлять заявки на почту (FormSubmit)</span>
+            </label>
+            <p style="font-size: 0.85rem; color: #666; margin-top: 5px;">Заявки будут дублироваться на указанный email</p>
+        </div>
+        
+        <div id="formsubmitSettings" style="display: none; margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 10px;">
+            <div style="margin-bottom: 15px;">
+                <label>Email для получения заявок</label>
+                <input type="email" id="notificationEmail" placeholder="example@mail.ru" style="width: 100%; padding: 10px; margin-top: 5px; border: 2px solid #e0e0e0; border-radius: 8px;">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label>FormSubmit URL (не меняйте, если не уверены)</label>
+                <input type="text" id="formsubmitUrl" placeholder="https://formsubmit.co/ajax/email@mail.ru" style="width: 100%; padding: 10px; margin-top: 5px; border: 2px solid #e0e0e0; border-radius: 8px;">
+            </div>
+            <p style="font-size: 0.8rem; color: #999;">Чтобы активировать FormSubmit, отправьте тестовую заявку и подтвердите email в письме</p>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                <input type="checkbox" id="googleSheetsEnabled">
+                <span style="font-weight: 600;">Сохранять заявки в Google Sheets</span>
+            </label>
+            <p style="font-size: 0.85rem; color: #666; margin-top: 5px;">Заявки будут сохраняться в вашу таблицу</p>
+        </div>
+        
+        <div id="googleSheetsSettings" style="display: none; margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 10px;">
+            <div style="margin-bottom: 10px;">
+                <label>Google Sheets API URL</label>
+                <input type="text" id="googleSheetsUrl" placeholder="https://script.google.com/macros/s/.../exec" style="width: 100%; padding: 10px; margin-top: 5px; border: 2px solid #e0e0e0; border-radius: 8px;">
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button onclick="saveSettings()" style="flex: 1; padding: 12px; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer;">Сохранить настройки</button>
+            <button onclick="closeSettingsModal()" style="flex: 1; padding: 12px; background: #6c757d; color: white; border: none; border-radius: 8px; cursor: pointer;">Отмена</button>
+        </div>
+        <div id="settingsMessage" style="margin-top: 15px; text-align: center; font-size: 0.9rem;"></div>
     </div>
 </div>
 

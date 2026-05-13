@@ -1,10 +1,38 @@
 // ============================================
-// КОНТАКТЫ: отправка заявок в Google Sheets
+// КОНТАКТЫ: отправка заявок (с серверными настройками)
 // ============================================
 
-const GOOGLE_SHEETS_API = 'https://script.google.com/macros/s/AKfycbzWMfPLH3N6LZzwtuNr8d6vUS4JB0O_RWXZHCTf3-ZKbhpD0ZAFZCFXihFJAyZtpC2IMg/exec';
+let cachedSettings = null;
 
-function initContactForm() {
+async function loadSettings() {
+    if (cachedSettings) return cachedSettings;
+    try {
+        const response = await fetch('/api/settings');
+        cachedSettings = await response.json();
+        return cachedSettings;
+    } catch (error) {
+        console.error('Ошибка загрузки настроек:', error);
+        return { formsubmitEnabled: false, googleSheetsEnabled: true };
+    }
+}
+
+async function getFormsubmitUrl() {
+    const settings = await loadSettings();
+    if (settings.formsubmitEnabled && settings.formsubmitUrl) {
+        return settings.formsubmitUrl;
+    }
+    return null;
+}
+
+async function getGoogleSheetsUrl() {
+    const settings = await loadSettings();
+    if (settings.googleSheetsEnabled && settings.googleSheetsUrl) {
+        return settings.googleSheetsUrl;
+    }
+    return null;
+}
+
+async function initContactForm() {
     const form = document.getElementById('contactForm');
     if (!form) return;
     
@@ -32,21 +60,60 @@ function initContactForm() {
         btn.textContent = 'Отправка...';
         btn.disabled = true;
         
-        try {
-            await fetch(GOOGLE_SHEETS_API, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+        const googleUrl = await getGoogleSheetsUrl();
+        const formsubmitUrl = await getFormsubmitUrl();
+        
+        let googleOk = false, emailOk = false;
+        
+        if (googleUrl) {
+            try {
+                await fetch(googleUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                googleOk = true;
+            } catch (error) { console.error('Google Sheets error:', error); }
+        }
+        
+        if (formsubmitUrl) {
+            try {
+                await fetch(formsubmitUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({
+                        name: formData.name,
+                        phone: formData.phone,
+                        email: formData.email,
+                        car: formData.car,
+                        message: formData.message,
+                        _subject: `Новая заявка от ${formData.name}`
+                    })
+                });
+                emailOk = true;
+            } catch (error) { console.error('FormSubmit error:', error); }
+        }
+        
+        btn.textContent = originalText;
+        btn.disabled = false;
+        
+        if (googleOk || emailOk) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Заявка отправлена!',
+                text: 'Мы свяжемся с вами в ближайшее время',
+                confirmButtonColor: '#ff5722'
             });
-            
-            Swal.fire({ icon: 'success', title: 'Заявка отправлена!', text: 'Мы свяжемся с вами', confirmButtonColor: '#ff5722' });
             form.reset();
-        } catch (error) {
-            Swal.fire({ icon: 'error', title: 'Ошибка!', text: 'Не удалось отправить', confirmButtonColor: '#ff5722' });
-        } finally {
-            btn.textContent = originalText;
-            btn.disabled = false;
+        } else {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Внимание',
+                text: 'Заявка сохранена, но есть проблемы с отправкой',
+                confirmButtonColor: '#ff5722'
+            });
+            form.reset();
         }
     });
 }

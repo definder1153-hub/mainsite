@@ -423,6 +423,72 @@ function exportToExcel() {
     Swal.fire('Экспорт завершен!', '', 'success');
 }
 
+// ===== НАСТРОЙКИ (через сервер) =====
+
+async function openSettingsModal() {
+    try {
+        const response = await fetch('/api/settings');
+        const settings = await response.json();
+        
+        document.getElementById('formsubmitEnabled').checked = settings.formsubmitEnabled === true;
+        document.getElementById('googleSheetsEnabled').checked = settings.googleSheetsEnabled !== false;
+        document.getElementById('notificationEmail').value = settings.notificationEmail || '';
+        document.getElementById('formsubmitUrl').value = settings.formsubmitUrl || '';
+        document.getElementById('googleSheetsUrl').value = settings.googleSheetsUrl || '';
+        
+        toggleFormsubmitSettings();
+        toggleGoogleSheetsSettings();
+        
+        document.getElementById('settingsModal').style.display = 'flex';
+        document.getElementById('settingsMessage').innerHTML = '';
+    } catch (error) {
+        Swal.fire('Ошибка', 'Не удалось загрузить настройки', 'error');
+    }
+}
+
+function closeSettingsModal() {
+    document.getElementById('settingsModal').style.display = 'none';
+}
+
+function toggleFormsubmitSettings() {
+    const enabled = document.getElementById('formsubmitEnabled').checked;
+    document.getElementById('formsubmitSettings').style.display = enabled ? 'block' : 'none';
+}
+
+function toggleGoogleSheetsSettings() {
+    const enabled = document.getElementById('googleSheetsEnabled').checked;
+    document.getElementById('googleSheetsSettings').style.display = enabled ? 'block' : 'none';
+}
+
+async function saveSettings() {
+    const settings = {
+        formsubmitEnabled: document.getElementById('formsubmitEnabled').checked,
+        googleSheetsEnabled: document.getElementById('googleSheetsEnabled').checked,
+        notificationEmail: document.getElementById('notificationEmail').value,
+        formsubmitUrl: document.getElementById('formsubmitUrl').value,
+        googleSheetsUrl: document.getElementById('googleSheetsUrl').value
+    };
+    
+    try {
+        const response = await fetch('/api/settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(settings)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            document.getElementById('settingsMessage').innerHTML = '<span style="color: green;">✅ Настройки сохранены!</span>';
+            setTimeout(() => closeSettingsModal(), 1500);
+        } else {
+            throw new Error(result.message);
+        }
+    } catch (error) {
+        document.getElementById('settingsMessage').innerHTML = '<span style="color: red;">❌ Ошибка сохранения</span>';
+    }
+}
+
 // ===== ИНИЦИАЛИЗАЦИЯ =====
 async function initAdminAuth() {
     await initAuth();
